@@ -1,308 +1,542 @@
-// ===============================
-// MOBILE MENU
-// ===============================
+/* =========================================
+   BHUTAN HERITAGE MUSEUM
+   JAVASCRIPT
+========================================= */
 
-const menuToggle = document.getElementById("menuToggle");
-const navMenu = document.getElementById("navMenu");
+
+/* =========================================
+   MOBILE MENU
+========================================= */
+
+const menuToggle =
+    document.getElementById("menuToggle");
+
+const navMenu =
+    document.getElementById("navMenu");
+
 
 if (menuToggle && navMenu) {
-    menuToggle.addEventListener("click", () => {
-        navMenu.classList.toggle("open");
 
-        menuToggle.textContent =
-            navMenu.classList.contains("open")
-                ? "✕"
-                : "☰";
+    menuToggle.addEventListener(
+        "click",
+        function () {
+
+            navMenu.classList.toggle("open");
+
+            if (
+                navMenu.classList.contains("open")
+            ) {
+
+                menuToggle.textContent = "✕";
+
+            } else {
+
+                menuToggle.textContent = "☰";
+
+            }
+
+        }
+    );
+
+
+    const navLinks =
+        navMenu.querySelectorAll("a");
+
+
+    navLinks.forEach(function (link) {
+
+        link.addEventListener(
+            "click",
+            function () {
+
+                navMenu.classList.remove("open");
+
+                menuToggle.textContent = "☰";
+
+            }
+        );
+
     });
 
-    document.querySelectorAll("#navMenu a").forEach(link => {
-        link.addEventListener("click", () => {
-            navMenu.classList.remove("open");
-            menuToggle.textContent = "☰";
-        });
-    });
 }
 
 
-// ===============================
-// DARK MODE
-// ===============================
+/* =========================================
+   DARK MODE
+========================================= */
 
-const themeToggle = document.getElementById("themeToggle");
+const themeToggle =
+    document.getElementById("themeToggle");
+
+
+function updateThemeIcon() {
+
+    if (!themeToggle) {
+        return;
+    }
+
+
+    if (
+        document.body.classList.contains("dark")
+    ) {
+
+        themeToggle.textContent = "☀️";
+
+        themeToggle.setAttribute(
+            "aria-label",
+            "Switch to light mode"
+        );
+
+    } else {
+
+        themeToggle.textContent = "🌙";
+
+        themeToggle.setAttribute(
+            "aria-label",
+            "Switch to dark mode"
+        );
+
+    }
+
+}
+
+
+/* Load saved theme */
+
+const savedTheme =
+    localStorage.getItem("museumTheme");
+
+
+if (savedTheme === "dark") {
+
+    document.body.classList.add("dark");
+
+}
+
+
+updateThemeIcon();
+
+
+/* Toggle theme */
 
 if (themeToggle) {
 
-    // Check saved theme
-    const savedTheme = localStorage.getItem("museumTheme");
+    themeToggle.addEventListener(
+        "click",
+        function () {
 
-    if (savedTheme === "dark") {
-        document.body.classList.add("dark");
-        themeToggle.textContent = "☀️";
-    } else {
-        themeToggle.textContent = "🌙";
-    }
+            document.body.classList.toggle("dark");
 
-    // Toggle theme
-    themeToggle.addEventListener("click", () => {
 
-        document.body.classList.toggle("dark");
+            const darkMode =
+                document.body.classList.contains("dark");
 
-        const isDark =
-            document.body.classList.contains("dark");
 
-        if (isDark) {
-            themeToggle.textContent = "☀️";
-            localStorage.setItem("museumTheme", "dark");
-        } else {
-            themeToggle.textContent = "🌙";
-            localStorage.setItem("museumTheme", "light");
+            if (darkMode) {
+
+                localStorage.setItem(
+                    "museumTheme",
+                    "dark"
+                );
+
+            } else {
+
+                localStorage.setItem(
+                    "museumTheme",
+                    "light"
+                );
+
+            }
+
+
+            updateThemeIcon();
+
         }
-    });
+    );
+
 }
 
 
-// ===============================
-// COLLECTION FILTER
-// ===============================
+/* =========================================
+   COLLECTION FILTER
+========================================= */
 
-const filters =
+const filterButtons =
     document.querySelectorAll(".filter");
 
-const cards =
-    document.querySelectorAll(".collection-card");
 
-filters.forEach(filter => {
+const collectionCards =
+    document.querySelectorAll(
+        ".collection-card"
+    );
 
-    filter.addEventListener("click", () => {
 
-        filters.forEach(button => {
-            button.classList.remove("active");
-        });
+filterButtons.forEach(function (button) {
 
-        filter.classList.add("active");
+    button.addEventListener(
+        "click",
+        function () {
 
-        const category =
-            filter.getAttribute("data-filter");
+            /* Remove active */
 
-        cards.forEach(card => {
+            filterButtons.forEach(
+                function (item) {
 
-            const cardCategory =
-                card.getAttribute("data-category");
+                    item.classList.remove(
+                        "active"
+                    );
 
-            if (
-                category === "all" ||
-                category === cardCategory
-            ) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
+                }
+            );
 
-        });
-    });
+
+            /* Add active */
+
+            button.classList.add("active");
+
+
+            const selectedCategory =
+                button.getAttribute(
+                    "data-filter"
+                );
+
+
+            /* Filter cards */
+
+            collectionCards.forEach(
+                function (card) {
+
+                    const cardCategory =
+                        card.getAttribute(
+                            "data-category"
+                        );
+
+
+                    if (
+                        selectedCategory === "all" ||
+                        selectedCategory === cardCategory
+                    ) {
+
+                        card.style.display =
+                            "block";
+
+                    } else {
+
+                        card.style.display =
+                            "none";
+
+                    }
+
+                }
+            );
+
+        }
+    );
 
 });
 
 
-// ===============================
-// COLLECTION POPUP
-// ===============================
+/* =========================================
+   COLLECTION POPUP
+========================================= */
 
 const modal =
     document.getElementById("modal");
 
+
 const modalTitle =
     document.getElementById("modalTitle");
 
+
 const modalInfo =
     document.getElementById("modalInfo");
+
 
 const modalClose =
     document.getElementById("modalClose");
 
 
-document.querySelectorAll(".learn-btn")
-    .forEach(button => {
+const learnButtons =
+    document.querySelectorAll(".learn-btn");
 
-        button.addEventListener("click", () => {
+
+learnButtons.forEach(function (button) {
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            const title =
+                button.getAttribute(
+                    "data-title"
+                );
+
+
+            const info =
+                button.getAttribute(
+                    "data-info"
+                );
+
 
             modalTitle.textContent =
-                button.dataset.title;
+                title;
+
 
             modalInfo.textContent =
-                button.dataset.info;
+                info;
+
 
             modal.classList.add("show");
 
-        });
-
-    });
-
-
-if (modalClose) {
-    modalClose.addEventListener("click", () => {
-        modal.classList.remove("show");
-    });
-}
-
-
-if (modal) {
-
-    modal.addEventListener("click", event => {
-
-        if (event.target === modal) {
-            modal.classList.remove("show");
         }
-
-    });
-
-}
-
-
-document.addEventListener("keydown", event => {
-
-    if (event.key === "Escape" && modal) {
-        modal.classList.remove("show");
-    }
+    );
 
 });
 
 
-// ===============================
-// VISITOR PLANNER
-// ===============================
+/* Close modal */
+
+if (modalClose) {
+
+    modalClose.addEventListener(
+        "click",
+        function () {
+
+            modal.classList.remove("show");
+
+        }
+    );
+
+}
+
+
+/* Close by clicking outside */
+
+if (modal) {
+
+    modal.addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === modal) {
+
+                modal.classList.remove(
+                    "show"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* Close with Escape */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape" &&
+            modal
+        ) {
+
+            modal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   VISITOR PLANNER
+========================================= */
 
 const visitForm =
     document.getElementById("visitForm");
 
+
 if (visitForm) {
 
-    visitForm.addEventListener("submit", event => {
+    visitForm.addEventListener(
+        "submit",
+        function (event) {
 
-        event.preventDefault();
-
-        const visitors =
-            Number(
-                document.getElementById("visitors").value
-            );
-
-        const visitType =
-            document.getElementById("visitType").value;
-
-        const interest =
-            document.getElementById("interest").value;
-
-        const result =
-            document.getElementById("planResult");
+            event.preventDefault();
 
 
-        const visitNames = {
-
-            general: "General Tour",
-
-            family: "Family Tour",
-
-            student: "Student Tour"
-
-        };
+            const visitors =
+                document.getElementById(
+                    "visitors"
+                ).value;
 
 
-        const interestNames = {
-
-            all: "all major collections",
-
-            art: "art and textiles",
-
-            history: "history",
-
-            culture: "culture and festivals",
-
-            royal: "royal heritage"
-
-        };
+            const visitType =
+                document.getElementById(
+                    "visitType"
+                ).value;
 
 
-        const duration =
-            interest === "all"
-                ? "about 2 hours"
-                : "about 90 minutes";
+            const interest =
+                document.getElementById(
+                    "interest"
+                ).value;
 
 
-        result.innerHTML = `
-            <strong>✨ Your Museum Route</strong>
-            <br><br>
+            const result =
+                document.getElementById(
+                    "planResult"
+                );
 
-            👥 Visitors:
-            ${visitors}
 
-            <br>
+            const tourNames = {
 
-            🎟️ Tour:
-            ${visitNames[visitType]}
+                general: "General Tour",
 
-            <br>
+                family: "Family Tour",
 
-            🏛️ Focus:
-            ${interestNames[interest]}
+                student: "Student Tour"
 
-            <br>
+            };
 
-            ⏱️ Suggested time:
-            ${duration}
-        `;
 
-        result.style.display = "block";
+            const interestNames = {
 
-    });
+                all: "all major museum collections",
+
+                art: "traditional Bhutanese art",
+
+                history: "Bhutanese history",
+
+                culture:
+                    "culture, festivals and traditions",
+
+                royal:
+                    "royal heritage"
+
+            };
+
+
+            let duration;
+
+
+            if (interest === "all") {
+
+                duration =
+                    "approximately 2 hours";
+
+            } else {
+
+                duration =
+                    "approximately 90 minutes";
+
+            }
+
+
+            result.innerHTML = `
+
+                <strong>
+                    ✨ Your Museum Route
+                </strong>
+
+                <br><br>
+
+                👥 Visitors:
+                ${visitors}
+
+                <br>
+
+                🎟️ Tour:
+                ${tourNames[visitType]}
+
+                <br>
+
+                🏛️ Focus:
+                ${interestNames[interest]}
+
+                <br>
+
+                ⏱️ Suggested time:
+                ${duration}
+
+            `;
+
+
+            result.style.display = "block";
+
+        }
+    );
 
 }
 
 
-// ===============================
-// BACK TO TOP
-// ===============================
+/* =========================================
+   BACK TO TOP
+========================================= */
 
-const topBtn =
+const topButton =
     document.getElementById("topBtn");
 
 
-window.addEventListener("scroll", () => {
+window.addEventListener(
+    "scroll",
+    function () {
 
-    if (window.scrollY > 400) {
+        if (!topButton) {
+            return;
+        }
 
-        topBtn.classList.add("show");
 
-    } else {
+        if (window.scrollY > 400) {
 
-        topBtn.classList.remove("show");
+            topButton.classList.add("show");
+
+        } else {
+
+            topButton.classList.remove("show");
+
+        }
 
     }
+);
 
-});
 
+if (topButton) {
 
-if (topBtn) {
+    topButton.addEventListener(
+        "click",
+        function () {
 
-    topBtn.addEventListener("click", () => {
+            window.scrollTo({
 
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+                top: 0,
 
-    });
+                behavior: "smooth"
+
+            });
+
+        }
+    );
 
 }
 
 
-// ===============================
-// CURRENT YEAR
-// ===============================
+/* =========================================
+   CURRENT YEAR
+========================================= */
 
-const year =
+const yearElement =
     document.getElementById("year");
 
-if (year) {
-    year.textContent =
+
+if (yearElement) {
+
+    yearElement.textContent =
         new Date().getFullYear();
+
 }
