@@ -1,770 +1,308 @@
-<<<<<<< HEAD
-/* =========================
-   MOBILE MENU
-========================= */
+// ===============================
+// MOBILE MENU
+// ===============================
 
-const menuToggle =
-  document.getElementById("menuToggle");
+const menuToggle = document.getElementById("menuToggle");
+const navMenu = document.getElementById("navMenu");
 
-const navMenu =
-  document.getElementById("navMenu");
+if (menuToggle && navMenu) {
+    menuToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("open");
 
-
-menuToggle.addEventListener("click", () => {
-
-  navMenu.classList.toggle("open");
-
-  if (navMenu.classList.contains("open")) {
-
-    menuToggle.textContent = "✕";
-
-  } else {
-
-    menuToggle.textContent = "☰";
-
-  }
-
-});
-
-
-/* Close mobile menu after clicking link */
-
-document
-  .querySelectorAll("#navMenu a")
-  .forEach(link => {
-
-    link.addEventListener("click", () => {
-
-      navMenu.classList.remove("open");
-
-      menuToggle.textContent = "☰";
-
+        menuToggle.textContent =
+            navMenu.classList.contains("open")
+                ? "✕"
+                : "☰";
     });
 
-  });
-
-
-/* =========================
-   DARK / LIGHT MODE
-========================= */
-
-const themeToggle =
-  document.getElementById("themeToggle");
-
-
-themeToggle.addEventListener("click", () => {
-
-  document.body.classList.toggle("dark");
-
-  const darkMode =
-    document.body.classList.contains("dark");
-
-
-  themeToggle.textContent =
-    darkMode ? "☀️" : "🌙";
-
-
-  localStorage.setItem(
-    "museumTheme",
-    darkMode ? "dark" : "light"
-  );
-
-});
-
-
-/* Remember selected theme */
-
-if (
-  localStorage.getItem("museumTheme")
-  === "dark"
-) {
-
-  document.body.classList.add("dark");
-
-  themeToggle.textContent = "☀️";
-
+    document.querySelectorAll("#navMenu a").forEach(link => {
+        link.addEventListener("click", () => {
+            navMenu.classList.remove("open");
+            menuToggle.textContent = "☰";
+        });
+    });
 }
 
 
-/* =========================
-   COLLECTION FILTER
-========================= */
+// ===============================
+// DARK MODE
+// ===============================
+
+const themeToggle = document.getElementById("themeToggle");
+
+if (themeToggle) {
+
+    // Check saved theme
+    const savedTheme = localStorage.getItem("museumTheme");
+
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark");
+        themeToggle.textContent = "☀️";
+    } else {
+        themeToggle.textContent = "🌙";
+    }
+
+    // Toggle theme
+    themeToggle.addEventListener("click", () => {
+
+        document.body.classList.toggle("dark");
+
+        const isDark =
+            document.body.classList.contains("dark");
+
+        if (isDark) {
+            themeToggle.textContent = "☀️";
+            localStorage.setItem("museumTheme", "dark");
+        } else {
+            themeToggle.textContent = "🌙";
+            localStorage.setItem("museumTheme", "light");
+        }
+    });
+}
+
+
+// ===============================
+// COLLECTION FILTER
+// ===============================
 
 const filters =
-  document.querySelectorAll(".filter");
+    document.querySelectorAll(".filter");
 
 const cards =
-  document.querySelectorAll(".collection-card");
-
+    document.querySelectorAll(".collection-card");
 
 filters.forEach(filter => {
 
-  filter.addEventListener("click", () => {
+    filter.addEventListener("click", () => {
 
-    /* Remove active class */
+        filters.forEach(button => {
+            button.classList.remove("active");
+        });
 
-    filters.forEach(btn => {
+        filter.classList.add("active");
 
-      btn.classList.remove("active");
+        const category =
+            filter.getAttribute("data-filter");
 
+        cards.forEach(card => {
+
+            const cardCategory =
+                card.getAttribute("data-category");
+
+            if (
+                category === "all" ||
+                category === cardCategory
+            ) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+
+        });
     });
-
-
-    /* Add active class */
-
-    filter.classList.add("active");
-
-
-    const category =
-      filter.dataset.filter;
-
-
-    /* Show / hide cards */
-
-    cards.forEach(card => {
-
-      const visible =
-        category === "all" ||
-        card.dataset.category === category;
-
-
-      if (visible) {
-
-        card.style.display = "block";
-
-      } else {
-
-        card.style.display = "none";
-
-      }
-
-    });
-
-  });
 
 });
 
 
-/* =========================
-   COLLECTION MODAL
-========================= */
+// ===============================
+// COLLECTION POPUP
+// ===============================
 
 const modal =
-  document.getElementById("modal");
+    document.getElementById("modal");
 
 const modalTitle =
-  document.getElementById("modalTitle");
+    document.getElementById("modalTitle");
 
 const modalInfo =
-  document.getElementById("modalInfo");
+    document.getElementById("modalInfo");
 
 const modalClose =
-  document.getElementById("modalClose");
+    document.getElementById("modalClose");
 
 
-const learnButtons =
-  document.querySelectorAll(".learn-btn");
+document.querySelectorAll(".learn-btn")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            modalTitle.textContent =
+                button.dataset.title;
+
+            modalInfo.textContent =
+                button.dataset.info;
+
+            modal.classList.add("show");
+
+        });
+
+    });
 
 
-learnButtons.forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    modalTitle.textContent =
-      button.dataset.title;
-
-    modalInfo.textContent =
-      button.dataset.info;
-
-    modal.classList.add("show");
-
-    modal.setAttribute(
-      "aria-hidden",
-      "false"
-    );
-
-  });
-
-});
+if (modalClose) {
+    modalClose.addEventListener("click", () => {
+        modal.classList.remove("show");
+    });
+}
 
 
-/* Close modal */
+if (modal) {
 
-function closeModal() {
+    modal.addEventListener("click", event => {
 
-  modal.classList.remove("show");
+        if (event.target === modal) {
+            modal.classList.remove("show");
+        }
 
-  modal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
+    });
 
 }
 
 
-modalClose.addEventListener(
-  "click",
-  closeModal
-);
+document.addEventListener("keydown", event => {
 
-
-/* Close modal when clicking outside */
-
-modal.addEventListener("click", event => {
-
-  if (event.target === modal) {
-
-    closeModal();
-
-  }
+    if (event.key === "Escape" && modal) {
+        modal.classList.remove("show");
+    }
 
 });
 
 
-/* Close modal with Escape key */
-
-document.addEventListener(
-  "keydown",
-  event => {
-
-    if (event.key === "Escape") {
-
-      closeModal();
-
-    }
-
-  }
-);
-
-
-/* =========================
-   VISITOR PLANNER
-========================= */
+// ===============================
+// VISITOR PLANNER
+// ===============================
 
 const visitForm =
-  document.getElementById("visitForm");
+    document.getElementById("visitForm");
+
+if (visitForm) {
+
+    visitForm.addEventListener("submit", event => {
+
+        event.preventDefault();
+
+        const visitors =
+            Number(
+                document.getElementById("visitors").value
+            );
+
+        const visitType =
+            document.getElementById("visitType").value;
+
+        const interest =
+            document.getElementById("interest").value;
+
+        const result =
+            document.getElementById("planResult");
 
 
-visitForm.addEventListener(
-  "submit",
-  event => {
+        const visitNames = {
 
-    event.preventDefault();
+            general: "General Tour",
 
+            family: "Family Tour",
 
-    const visitors =
-      Number(
-        document.getElementById("visitors").value
-      );
+            student: "Student Tour"
+
+        };
 
 
-    const type =
-      document.getElementById("visitType").value;
+        const interestNames = {
+
+            all: "all major collections",
+
+            art: "art and textiles",
+
+            history: "history",
+
+            culture: "culture and festivals",
+
+            royal: "royal heritage"
+
+        };
 
 
-    const interest =
-      document.getElementById("interest").value;
+        const duration =
+            interest === "all"
+                ? "about 2 hours"
+                : "about 90 minutes";
 
 
-    const result =
-      document.getElementById("planResult");
+        result.innerHTML = `
+            <strong>✨ Your Museum Route</strong>
+            <br><br>
+
+            👥 Visitors:
+            ${visitors}
+
+            <br>
+
+            🎟️ Tour:
+            ${visitNames[visitType]}
+
+            <br>
+
+            🏛️ Focus:
+            ${interestNames[interest]}
+
+            <br>
+
+            ⏱️ Suggested time:
+            ${duration}
+        `;
+
+        result.style.display = "block";
+
+    });
+
+}
 
 
-    const typeName = {
-
-      general: "General Tour",
-
-      family: "Family Tour",
-
-      student: "Student Tour"
-
-    }[type];
-
-
-    const interestName = {
-
-      all: "all major collections",
-
-      art: "art and textiles",
-
-      history: "history",
-
-      culture: "culture and festivals",
-
-      royal: "royal heritage"
-
-    }[interest];
-
-
-    const duration =
-      interest === "all"
-        ? "about 2 hours"
-        : "about 90 minutes";
-
-
-    result.innerHTML = `
-
-      <strong>
-        ✨ Route Ready!
-      </strong>
-
-      <br>
-
-      ${visitors}
-      visitor${visitors > 1 ? "s" : ""}
-
-      ·
-
-      ${typeName}
-
-      <br>
-
-      Focus on
-      ${interestName};
-
-      allow
-      ${duration}.
-
-    `;
-
-
-    result.style.display = "block";
-
-  }
-);
-
-
-/* =========================
-   BACK TO TOP
-========================= */
+// ===============================
+// BACK TO TOP
+// ===============================
 
 const topBtn =
-  document.getElementById("topBtn");
+    document.getElementById("topBtn");
 
 
-window.addEventListener(
-  "scroll",
-  () => {
+window.addEventListener("scroll", () => {
 
-    if (window.scrollY > 500) {
+    if (window.scrollY > 400) {
 
-      topBtn.classList.add("show");
+        topBtn.classList.add("show");
 
     } else {
 
-      topBtn.classList.remove("show");
+        topBtn.classList.remove("show");
 
     }
 
-  }
-);
-
-
-topBtn.addEventListener(
-  "click",
-  () => {
-
-    window.scrollTo({
-
-      top: 0,
-
-      behavior: "smooth"
-
-    });
-
-  }
-);
-
-
-/* =========================
-   CURRENT YEAR
-========================= */
-
-document.getElementById("year")
-  .textContent =
-=======
-/* =========================
-   MOBILE MENU
-========================= */
-
-const menuToggle =
-  document.getElementById("menuToggle");
-
-const navMenu =
-  document.getElementById("navMenu");
-
-
-menuToggle.addEventListener("click", () => {
-
-  navMenu.classList.toggle("open");
-
-  if (navMenu.classList.contains("open")) {
-
-    menuToggle.textContent = "✕";
-
-  } else {
-
-    menuToggle.textContent = "☰";
-
-  }
-
 });
 
 
-/* Close mobile menu after clicking link */
+if (topBtn) {
 
-document
-  .querySelectorAll("#navMenu a")
-  .forEach(link => {
+    topBtn.addEventListener("click", () => {
 
-    link.addEventListener("click", () => {
-
-      navMenu.classList.remove("open");
-
-      menuToggle.textContent = "☰";
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
 
     });
-
-  });
-
-
-/* =========================
-   DARK / LIGHT MODE
-========================= */
-
-const themeToggle =
-  document.getElementById("themeToggle");
-
-
-themeToggle.addEventListener("click", () => {
-
-  document.body.classList.toggle("dark");
-
-  const darkMode =
-    document.body.classList.contains("dark");
-
-
-  themeToggle.textContent =
-    darkMode ? "☀️" : "🌙";
-
-
-  localStorage.setItem(
-    "museumTheme",
-    darkMode ? "dark" : "light"
-  );
-
-});
-
-
-/* Remember selected theme */
-
-if (
-  localStorage.getItem("museumTheme")
-  === "dark"
-) {
-
-  document.body.classList.add("dark");
-
-  themeToggle.textContent = "☀️";
 
 }
 
 
-/* =========================
-   COLLECTION FILTER
-========================= */
+// ===============================
+// CURRENT YEAR
+// ===============================
 
-const filters =
-  document.querySelectorAll(".filter");
+const year =
+    document.getElementById("year");
 
-const cards =
-  document.querySelectorAll(".collection-card");
-
-
-filters.forEach(filter => {
-
-  filter.addEventListener("click", () => {
-
-    /* Remove active class */
-
-    filters.forEach(btn => {
-
-      btn.classList.remove("active");
-
-    });
-
-
-    /* Add active class */
-
-    filter.classList.add("active");
-
-
-    const category =
-      filter.dataset.filter;
-
-
-    /* Show / hide cards */
-
-    cards.forEach(card => {
-
-      const visible =
-        category === "all" ||
-        card.dataset.category === category;
-
-
-      if (visible) {
-
-        card.style.display = "block";
-
-      } else {
-
-        card.style.display = "none";
-
-      }
-
-    });
-
-  });
-
-});
-
-
-/* =========================
-   COLLECTION MODAL
-========================= */
-
-const modal =
-  document.getElementById("modal");
-
-const modalTitle =
-  document.getElementById("modalTitle");
-
-const modalInfo =
-  document.getElementById("modalInfo");
-
-const modalClose =
-  document.getElementById("modalClose");
-
-
-const learnButtons =
-  document.querySelectorAll(".learn-btn");
-
-
-learnButtons.forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    modalTitle.textContent =
-      button.dataset.title;
-
-    modalInfo.textContent =
-      button.dataset.info;
-
-    modal.classList.add("show");
-
-    modal.setAttribute(
-      "aria-hidden",
-      "false"
-    );
-
-  });
-
-});
-
-
-/* Close modal */
-
-function closeModal() {
-
-  modal.classList.remove("show");
-
-  modal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
+if (year) {
+    year.textContent =
+        new Date().getFullYear();
 }
-
-
-modalClose.addEventListener(
-  "click",
-  closeModal
-);
-
-
-/* Close modal when clicking outside */
-
-modal.addEventListener("click", event => {
-
-  if (event.target === modal) {
-
-    closeModal();
-
-  }
-
-});
-
-
-/* Close modal with Escape key */
-
-document.addEventListener(
-  "keydown",
-  event => {
-
-    if (event.key === "Escape") {
-
-      closeModal();
-
-    }
-
-  }
-);
-
-
-/* =========================
-   VISITOR PLANNER
-========================= */
-
-const visitForm =
-  document.getElementById("visitForm");
-
-
-visitForm.addEventListener(
-  "submit",
-  event => {
-
-    event.preventDefault();
-
-
-    const visitors =
-      Number(
-        document.getElementById("visitors").value
-      );
-
-
-    const type =
-      document.getElementById("visitType").value;
-
-
-    const interest =
-      document.getElementById("interest").value;
-
-
-    const result =
-      document.getElementById("planResult");
-
-
-    const typeName = {
-
-      general: "General Tour",
-
-      family: "Family Tour",
-
-      student: "Student Tour"
-
-    }[type];
-
-
-    const interestName = {
-
-      all: "all major collections",
-
-      art: "art and textiles",
-
-      history: "history",
-
-      culture: "culture and festivals",
-
-      royal: "royal heritage"
-
-    }[interest];
-
-
-    const duration =
-      interest === "all"
-        ? "about 2 hours"
-        : "about 90 minutes";
-
-
-    result.innerHTML = `
-
-      <strong>
-        ✨ Route Ready!
-      </strong>
-
-      <br>
-
-      ${visitors}
-      visitor${visitors > 1 ? "s" : ""}
-
-      ·
-
-      ${typeName}
-
-      <br>
-
-      Focus on
-      ${interestName};
-
-      allow
-      ${duration}.
-
-    `;
-
-
-    result.style.display = "block";
-
-  }
-);
-
-
-/* =========================
-   BACK TO TOP
-========================= */
-
-const topBtn =
-  document.getElementById("topBtn");
-
-
-window.addEventListener(
-  "scroll",
-  () => {
-
-    if (window.scrollY > 500) {
-
-      topBtn.classList.add("show");
-
-    } else {
-
-      topBtn.classList.remove("show");
-
-    }
-
-  }
-);
-
-
-topBtn.addEventListener(
-  "click",
-  () => {
-
-    window.scrollTo({
-
-      top: 0,
-
-      behavior: "smooth"
-
-    });
-
-  }
-);
-
-
-/* =========================
-   CURRENT YEAR
-========================= */
-
-document.getElementById("year")
-  .textContent =
->>>>>>> 519328107e02f19ed1264393116e1b2c36d68aec
-  new Date().getFullYear();
